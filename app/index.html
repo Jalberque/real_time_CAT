@@ -1,0 +1,99 @@
+  <!doctype html>
+  <html class="no-js">
+    <head>
+      <meta charset="utf-8">
+      <title>real_time_CAT</title>
+      <meta name="description" content="">
+      <meta name="viewport" content="width=device-width">
+      <link rel="shortcut icon" href="/favicon.ico">
+   
+      <link rel="stylesheet" href="styles/main.css">
+      <!-- endbuild -->
+    </head>
+    <body>
+      <!--[if lt IE 10]>
+        <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+      <![endif]-->
+
+
+      <body>
+      <form id="form1" runat="server">
+      <select id = "mySelect">
+      </select>
+      <select id = "myStops">
+      </select>
+      </form>
+    </body>
+
+
+      <!-- build:js(.) scripts/vendor.js -->
+      <!-- bower:js -->
+      <!-- endbower -->
+      <!-- endbuild -->
+
+      <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+      
+     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+      <script>
+      var myRouteArray;
+
+      $(document).ready(function () {
+          $.ajax({
+              type: 'GET',
+              url: 'https://transloc-api-1-2.p.mashape.com/routes.json?agencies=20',
+              headers: {
+                "X-Mashape-Key":"x8aRtKZoiAmshKN2WzuebpKPxvuHp1IY5ZSjsnXtBZC0er6Bpt"
+              },
+              success: function (myData) {
+                  myRouteArray = myData.data[20];
+                  jQuery.each( myData.data[20], function( i, val ) {
+                    $('#mySelect')
+                    .append($("<option></option>")
+                    .attr("value",val.route_id)
+                    .text(val.long_name));
+              })
+                },
+              error: function (request, status, error) {
+                  alert(error);
+              }
+          });
+
+      });
+
+      $( "#mySelect" ).change(function (e) {
+        $('#myStops').empty();
+        var optionSelected = $("option:selected", this);
+        var valueSelected = this.value;
+        
+        $.ajax({
+              type: 'GET',
+              url: 'https://transloc-api-1-2.p.mashape.com/stops.json?agencies=20',
+              headers: {
+                "X-Mashape-Key":"x8aRtKZoiAmshKN2WzuebpKPxvuHp1IY5ZSjsnXtBZC0er6Bpt"
+              },
+              success: function (myData) {
+                  myStopArray = myData.data;
+                  jQuery.each( myData.data, function( i, val ) {
+                    
+                    if (val.routes[0] == valueSelected){
+                      $('#myStops')
+                    .append($("<option></option>")
+                    .attr("value",val.name)
+                    .text(val.name));
+                  }
+              })
+                },
+              error: function (request, status, error) {
+                  alert(error);
+              }
+          });
+
+
+
+        });
+
+
+      </script>
+          <!-- endbuild -->
+  </body>
+  </html>
